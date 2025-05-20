@@ -1,0 +1,53 @@
+import rodados.*
+
+describe "etapa 1" {
+    const property deportes = new Dependencia(empleados= 45)
+    const property cultura = new Dependencia(empleados= 31)
+    const property cachito = new Corsa(color= "rojo")
+
+    method initialize(){
+        deportes.agregartAFlota(cachito)
+        deportes.agregartAFlota(new Corsa(color= "azul"))
+        deportes.agregartAFlota(new Corsa(color= "verde"))
+        deportes.agregartAFlota(new Kwid(tieneTanqueAdicional= true))
+        deportes.agregartAFlota(new AutoEspecial(capacidad= 5, velocidadMaxima= 160, peso= 1200, color="beige"))
+    
+        cultura.agregartAFlota(cachito)
+        cultura.agregartAFlota(new Kwid(tieneTanqueAdicional= true))
+        cultura.agregartAFlota(new Kwid(tieneTanqueAdicional= false))
+        cultura.agregartAFlota(trafic)
+        trafic.interior(popular)
+        trafic.motor(bataton)
+    }
+
+  test "deportes tiene un peso total de 6450" {
+    assert.equals(1300+1300+1300+1350+1200, deportes.pesoTotalFlota())
+  }
+  test "cultura tiene un peso total de 9350" {
+    assert.equals(1300+1200+1350+4000+1000+500, cultura.pesoTotalFlota())
+  }
+  test "deportes esta bien equipada" {
+    assert.equals(true, deportes.estaBienEquipada())
+  }
+  test "cultura no esta bien equipada" {
+    assert.equals(false, cultura.estaBienEquipada())
+  }
+  test "la capacidad total de los colores azul de doportes son 7" {
+    assert.equals(7, deportes.capacidadTotalEnColor("azul"))
+  }
+  test "la capacidad total de los colores azul de cultura son 7" {
+    assert.equals(7, cultura.capacidadTotalEnColor("azul"))
+  }
+  test "el color mas rapido de deportes es el beige" {
+    assert.equals("beige", deportes.colorDelRodadoMasRapido())
+  }
+  test "el color mas rapido de cultura es el rojo" {
+    assert.equals("rojo", cultura.colorDelRodadoMasRapido())
+  }
+  test "la dependencia deportes es grande" {
+    assert.equals(true, deportes.esGrande())
+  }
+  test "la dependencia cultura no es grande" {
+    assert.equals(false, cultura.esGrande())
+  }
+}
