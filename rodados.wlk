@@ -1,4 +1,4 @@
-//------------RODADOS------------
+  //------------RODADOS------------
 import wollok.game.*
 
 class Corsa {
