@@ -1,24 +1,24 @@
 import rodados.*
 
 describe "etapa 1" {
-    const property deportes = new Dependencia(empleados= 45)
-    const property cultura = new Dependencia(empleados= 31)
-    const property cachito = new Corsa(color= "rojo")
+  const property deportes = new Dependencia(empleados= 45)
+  const property cultura = new Dependencia(empleados= 31)
+  const property cachito = new Corsa(color= "rojo")
 
-    method initialize(){
-        deportes.agregartAFlota(cachito)
-        deportes.agregartAFlota(new Corsa(color= "azul"))
-        deportes.agregartAFlota(new Corsa(color= "verde"))
-        deportes.agregartAFlota(new Kwid(tieneTanqueAdicional= true))
-        deportes.agregartAFlota(new AutoEspecial(capacidad= 5, velocidadMaxima= 160, peso= 1200, color="beige"))
+  method initialize(){
+    deportes.agregartAFlota(cachito)
+    deportes.agregartAFlota(new Corsa(color= "azul"))
+    deportes.agregartAFlota(new Corsa(color= "verde"))
+    deportes.agregartAFlota(new Kwid(tieneTanqueAdicional= true))
+    deportes.agregartAFlota(new AutoEspecial(capacidad= 5, velocidadMaxima= 160, peso= 1200, color="beige"))
     
-        cultura.agregartAFlota(cachito)
-        cultura.agregartAFlota(new Kwid(tieneTanqueAdicional= true))
-        cultura.agregartAFlota(new Kwid(tieneTanqueAdicional= false))
-        cultura.agregartAFlota(trafic)
-        trafic.interior(popular)
-        trafic.motor(bataton)
-    }
+    cultura.agregartAFlota(cachito)
+    cultura.agregartAFlota(new Kwid(tieneTanqueAdicional= true))
+    cultura.agregartAFlota(new Kwid(tieneTanqueAdicional= false))
+    cultura.agregartAFlota(trafic)
+    trafic.interior(popular)
+    trafic.motor(bataton)
+  }
 
   test "deportes tiene un peso total de 6450" {
     assert.equals(1300+1300+1300+1350+1200, deportes.pesoTotalFlota())
@@ -49,5 +49,31 @@ describe "etapa 1" {
   }
   test "la dependencia cultura no es grande" {
     assert.equals(false, cultura.esGrande())
+  }
+}
+
+describe "Etapa 2" {
+  const property cachito = new Corsa(color= "rojo")
+  const pedidouno= new Pedido(distancia=960, tiempoMaximo=8,cantidadDePasajeros=4, rodado= cachito)
+  method initialize(){
+    pedidouno.agregarColorIncompatible("azul")
+    pedidouno.agregarColorIncompatible("negro")
+  }
+  test "puede satisfacer este viaje" {
+    assert.equals(true, pedidouno.esSatisfactorio())
+  }
+  test "agregamos el rojo a los colores incompatibles" {
+    pedidouno.agregarColorIncompatible("rojo")
+    assert.equals(false, pedidouno.esSatisfactorio())
+  }
+  test "cambiamos la cantidad de pasajeros a 6" {
+    pedidouno.cantidadDePasajeros(6)
+    assert.equals(false, pedidouno.esSatisfactorio())
+  }
+  test "cambiamos el tiempo maximo a 6" {
+    pedidouno.acelerar()
+    pedidouno.acelerar()
+    assert.equals(160, pedidouno.velocidadRequerida())
+    assert.equals(false, pedidouno.esSatisfactorio())
   }
 }
