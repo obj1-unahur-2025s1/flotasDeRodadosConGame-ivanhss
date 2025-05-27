@@ -3,7 +3,11 @@ import wollok.game.*
 
 class Corsa {
   var property color
-  var position = new Position(x=0, y=0) //game.at(0, 0)
+  method initialize(){
+    if(not coloresValidos.listaDeColores().contains(color)){
+      self.error(color.toString() + " " + "no es un color valido para un auto")
+    }
+  }
   method capacidad() = 4
   method velocidadMaxima() = 150
   method peso() = 1300
@@ -31,6 +35,11 @@ class AutoEspecial {
   var property capacidad
   var property velocidadMaxima
   var property peso
+  method initialize(){
+    if(not coloresValidos.listaDeColores().contains(color)){
+      self.error(color.toString() + " " + "no es un color valido para un auto")
+    }
+  }
 }
 
 
@@ -59,10 +68,11 @@ object bataton {
 
 //------------DEPENDENCIA------------
 class Dependencia {
-  const flota = []
+  const property flota = []
+  const property pedidos = #{}
   var property empleados = 0
 
-  method agregartAFlota(rodado) {flota.add(rodado)}
+  method agregarAFlota(rodado) {flota.add(rodado)}
   method quitarDeFlota(rodado) {flota.remove(rodado)}
 
   method pesoTotalFlota() = flota.sum({r => r.peso()})
@@ -80,4 +90,60 @@ class Dependencia {
   method capacidadTotalFlota() = flota.sum({r => r.capacidad()})
 
   method esGrande() = self.tieneAlMenosRodados(5) and empleados >= 40
+
+  //Registro de pedidos
+  method agregarAPedidos(pedido) {pedidos.add(pedido)}
+  method quitarDePedidos(pedido) {pedidos.remove(pedido)}
+
+  method totalDePasajerosPedidos()= pedidos.sum({p => p.cantidadDePasajeros()})
+
+  method pedidosNoSatisfactorios() = pedidos.filter({p => !p.esSatisfactorio()})
+
+  method colorIncompatible(unColor)= pedidos.all({p => p.coloresIncompatibles().contains(unColor)})
+
+  method queTodosRelajen(){pedidos.forEach({p => p.relajar()})}
+}
+
+
+//------------COLORES------------
+object coloresValidos {
+  const property listaDeColores = #{"rojo","verde","azul","blanco"}
+}
+
+
+//------------PEDIDOS------------
+class Pedido {
+  const property coloresIncompatibles = #{}
+  var property distancia //distancia a recorrer en kilometros
+  var tiempoMaximo //tiempo maximo en el que se debe hacer el viaje
+  var property cantidadDePasajeros //cantidad de pasajeros a transportar
+  var property rodado
+
+  method agregarColorIncompatible(unColor){coloresIncompatibles.add(unColor)}
+  method eliminarColorIncompatible(unColor){
+    if(!coloresIncompatibles.contains(unColor)){
+      self.error("El color " + unColor + " "+"no estaba incluido en la lista de colores incompatibles")
+    }
+    coloresIncompatibles.remove(unColor)
+  }
+  method initialize(){
+    if(distancia <= 0){
+      self.error("el valor: "+ distancia.toString()+" " + "no es un entero positivo")
+    }
+    if(tiempoMaximo <= 0){
+      self.error("el valor: "+ tiempoMaximo.toString()+" " + "no es un entero positivo")
+    }
+    if(cantidadDePasajeros <= 0){
+      self.error("el valor: "+ cantidadDePasajeros.toString()+" " + "no es un entero positivo")
+    }
+  }
+  method velocidadRequerida()= distancia / tiempoMaximo
+  method esSatisfactorio(){
+    return
+      rodado.velocidadMaxima() >= self.velocidadRequerida() + 10 and
+      rodado.capacidad() >= self.cantidadDePasajeros() and
+      ! self.coloresIncompatibles().contains(rodado.color())
+  }
+  method acelerar(){tiempoMaximo = 1.max(tiempoMaximo - 1)}
+  method relajar(){tiempoMaximo += 1}
 }
